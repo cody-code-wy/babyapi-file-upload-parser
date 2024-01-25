@@ -20,8 +20,8 @@ func (c *writeAllFileFieldsContext) checkArray(v reflect.Value) {
 func (c *writeAllFileFieldsContext) checkStruct(v reflect.Value) {
 	switch fileField := v.Interface().(type) {
 	case FileField:
-		if fileField.valid {
-			err := fileField.writeFile(c.writePath, c.id)
+		if fileField.HasContent() {
+			err := fileField.WriteFile(c.writePath, c.id)
 			if err != nil {
 				fmt.Println(err)
 			}

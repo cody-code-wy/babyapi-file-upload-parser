@@ -203,7 +203,6 @@ func (d *MultipartFormDecoder) setFileField(formKey string, tags []string, field
 			FormKey:     formKey,
 			FormContext: d.GetContext(),
 			rawFile:     fileBuf,
-			valid:       true,
 		}
 		fieldValue.Set(reflect.ValueOf(fileMeta))
 	} else {
