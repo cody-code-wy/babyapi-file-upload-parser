@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/calvinmclean/babyapi"
+	"github.com/calvinmclean/babyapi/storage"
 	"github.com/cody-cody-wy/babyapiFileUploadParser"
 	"github.com/go-chi/render"
+	"github.com/madflojo/hord/drivers/hashmap"
 	"net/http"
 	"os"
 )
@@ -69,6 +71,15 @@ func main() {
 	render.Decode = babyapiFileUploadParser.Decoder
 
 	ProjectApi := babyapi.NewAPI[*Project]("Projects", "/Projects", func() *Project { return &Project{} })
+
+	db, err := storage.NewFileDB(hashmap.Config{
+		Filename: "projects.db.json",
+	})
+	if err != nil {
+		return
+	}
+
+	ProjectApi.Storage = storage.NewClient[*Project](db, "User")
 
 	ProjectApi.SetAfterDelete(func(r *http.Request) *babyapi.ErrResponse {
 		id := babyapi.GetIDParam(r, ProjectApi.Name())
