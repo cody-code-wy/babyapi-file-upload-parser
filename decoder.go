@@ -350,8 +350,6 @@ func DecodeMultipartForm(r *http.Request, v interface{}) {
 func Decoder(r *http.Request, v interface{}) error {
 	var err error
 
-	fmt.Println(r.Header.Get("Content-Type"))
-
 	if r.Header.Get("Content-Type")[:19] == "multipart/form-data" {
 		DecodeMultipartForm(r, v)
 	} else {
