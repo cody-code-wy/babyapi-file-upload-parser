@@ -78,3 +78,17 @@ func DeleteAllFiles(writePath string, id string, v interface{}) {
 	}}
 	context.recursiveChecker(reflect.ValueOf(v))
 }
+
+func FindByFileName(fileName string, v interface{}) (FileField, error) {
+	var foundFileField FileField
+	err := fmt.Errorf("could not find FileField with filename %s in interface %s", fileName, reflect.TypeOf(v))
+	context := fileFieldSearcherContent{writePath: "", id: "", v: v, handler: func(fileField FileField, context *fileFieldSearcherContent) {
+		if fileField.GetFileName() == fileName {
+			fmt.Println(fileName)
+			foundFileField = fileField
+			err = nil
+		}
+	}}
+	context.recursiveChecker(reflect.ValueOf(v))
+	return foundFileField, err
+}
