@@ -243,6 +243,7 @@ func (d *MultipartFormDecoder) setFileField(formKey string, tags []string, field
 		fileMeta := FileField{
 			FileName:    header.Filename,
 			FileSize:    header.Size,
+			MIMEHeader:  header.Header,
 			FormKey:     formKey,
 			FormContext: d.GetContext(),
 			rawFile:     fileBuf,

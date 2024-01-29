@@ -3,6 +3,7 @@ package babyapiFileUploadParser
 import (
 	"bytes"
 	"fmt"
+	"net/textproto"
 	"os"
 	"reflect"
 )
@@ -10,6 +11,7 @@ import (
 type FileField struct {
 	FileName    string
 	FileSize    int64
+	MIMEHeader  textproto.MIMEHeader
 	FormKey     string
 	FormContext string
 	rawFile     bytes.Buffer
