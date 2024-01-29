@@ -68,3 +68,13 @@ func WriteAllFileFields(writePath string, id string, v interface{}) {
 	}}
 	context.recursiveChecker(reflect.ValueOf(v))
 }
+
+func DeleteAllFiles(writePath string, id string, v interface{}) {
+	context := fileFieldSearcherContent{writePath: writePath, id: id, v: v, handler: func(fileField FileField, context *fileFieldSearcherContent) {
+		err := fileField.DeleteFile(context.writePath, context.id)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}}
+	context.recursiveChecker(reflect.ValueOf(v))
+}
