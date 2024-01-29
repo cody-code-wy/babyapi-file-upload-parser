@@ -35,6 +35,13 @@ func (c *writeAllFileFieldsContext) checkStruct(v reflect.Value) {
 	}
 }
 
+func (c *writeAllFileFieldsContext) checkMap(v reflect.Value) {
+	for _, k := range v.MapKeys() {
+		c.recursiveChecker(k)
+		c.recursiveChecker(v.MapIndex(k))
+	}
+}
+
 func (c *writeAllFileFieldsContext) recursiveChecker(v reflect.Value) {
 	if !v.IsValid() {
 		return
@@ -45,6 +52,8 @@ func (c *writeAllFileFieldsContext) recursiveChecker(v reflect.Value) {
 	switch v.Kind() {
 	case reflect.Array, reflect.Slice:
 		c.checkArray(v)
+	case reflect.Map:
+		c.checkMap(v)
 	case reflect.Struct:
 		c.checkStruct(v)
 	default: // Nothing to do

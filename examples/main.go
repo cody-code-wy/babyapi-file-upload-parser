@@ -54,6 +54,16 @@ type Types struct {
 	ImagesArray   [3]babyapiFileUploadParser.FileField
 	ImagesArray2D [2][2]babyapiFileUploadParser.FileField
 	privateInt    int
+	Maps          Maps
+}
+
+type Maps struct {
+	SliceStrStr []map[string]string
+	StrStr      map[string]string
+	StrStruct   map[string]TestStruct
+	IntStr      map[int]string
+	StrImage    map[string]babyapiFileUploadParser.FileField
+	// StructStr map[TestStruct]string // struct keys not supported by JSON
 }
 
 type Project struct {

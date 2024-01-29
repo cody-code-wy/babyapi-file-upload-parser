@@ -87,11 +87,7 @@ func (d *MultipartFormDecoder) isSettable(field reflect.StructField, value refle
 
 func (d *MultipartFormDecoder) hasNewValue(fieldKind reflect.Kind, formKey string) bool {
 	switch fieldKind {
-	case reflect.Array:
-		fallthrough
-	case reflect.Slice:
-		fallthrough
-	case reflect.Struct:
+	case reflect.Struct, reflect.Array, reflect.Slice, reflect.Map:
 		return true
 	default:
 		return len(d.request.PostForm[formKey]) > 0
@@ -142,7 +138,7 @@ func (d *MultipartFormDecoder) setArrayFormValue(formKey string, tags []string, 
 			d.PushContext(fmt.Sprintf("%s[%d]", formKey, i))
 		}
 
-		d.DecodeNode(d.request.FormValue(d.GetContext()), "", tags, fieldValue.Index(i))
+		d.CheckDecodeNode(d.request.FormValue(d.GetContext()), "", tags, fieldValue.Index(i))
 
 		d.PopContext()
 	}
@@ -180,12 +176,59 @@ func (d *MultipartFormDecoder) setSliceFormValue(formKey string, tags []string, 
 		}
 
 		newSliceElement := reflect.New(fieldValue.Type().Elem()).Elem()
-		d.DecodeNode(d.request.FormValue(d.GetContext()), "", tags, newSliceElement)
+		d.CheckDecodeNode(d.request.FormValue(d.GetContext()), "", tags, newSliceElement)
 		newSlice = reflect.Append(newSlice, newSliceElement)
 
 		d.PopContext()
 	}
 	fieldValue.Set(newSlice)
+}
+
+func extractKeys(baseKey string, k string) string {
+	if len(k) >= len(baseKey)+2 && k[:len(baseKey)] == baseKey {
+		partialKey := k[len(baseKey):]
+		closingIndex := strings.IndexByte(partialKey, ']')
+		if closingIndex > 0 {
+			return partialKey[:closingIndex]
+		}
+	}
+	return ""
+}
+
+func (d *MultipartFormDecoder) getMapKeys(formKey string) []string {
+	baseKey := fmt.Sprintf("%s[", d.AddContext(formKey))
+	var foundKeys []string
+	for k := range d.request.PostForm {
+		if foundKey := extractKeys(baseKey, k); foundKey != "" {
+			foundKeys = append(foundKeys, foundKey)
+		}
+	}
+	for k := range d.request.MultipartForm.File {
+		if foundKey := extractKeys(baseKey, k); foundKey != "" {
+			foundKeys = append(foundKeys, foundKey)
+		}
+	}
+	return foundKeys
+}
+
+func (d *MultipartFormDecoder) setMapFormValue(formKey string, tags []string, fieldValue reflect.Value) {
+	newMap := reflect.MakeMap(fieldValue.Type())
+	for _, k := range d.getMapKeys(formKey) {
+		if formKey == "" {
+			d.PushContext(fmt.Sprintf("[%s]", k))
+		} else {
+			d.PushContext(fmt.Sprintf("%s[%s]", formKey, k))
+		}
+
+		newKey := reflect.New(fieldValue.Type().Key()).Elem()
+		d.DecodeNode(k, "", tags, newKey)
+		newValue := reflect.New(fieldValue.Type().Elem()).Elem()
+		d.CheckDecodeNode(d.request.FormValue(d.GetContext()), "", tags, newValue)
+		newMap.SetMapIndex(newKey, newValue)
+
+		d.PopContext()
+	}
+	fieldValue.Set(newMap)
 }
 
 func (d *MultipartFormDecoder) setFileField(formKey string, tags []string, fieldValue reflect.Value) {
@@ -210,10 +253,14 @@ func (d *MultipartFormDecoder) setFileField(formKey string, tags []string, field
 	}
 }
 
-func (d *MultipartFormDecoder) DecodeNode(formValue string, formKey string, tags []string, value reflect.Value) {
+func (d *MultipartFormDecoder) CheckDecodeNode(formValue string, formKey string, tags []string, value reflect.Value) {
 	if !d.hasNewValue(value.Kind(), d.AddContext(formKey)) {
 		return
 	}
+	d.DecodeNode(formValue, formKey, tags, value)
+}
+
+func (d *MultipartFormDecoder) DecodeNode(formValue string, formKey string, tags []string, value reflect.Value) {
 	switch elementKind := value.Kind(); elementKind {
 	case reflect.Struct:
 		if value.Type().AssignableTo(fileFieldType) {
@@ -257,6 +304,8 @@ func (d *MultipartFormDecoder) DecodeNode(formValue string, formKey string, tags
 		d.setArrayFormValue(formKey, tags, value)
 	case reflect.Slice:
 		d.setSliceFormValue(formKey, tags, value)
+	case reflect.Map:
+		d.setMapFormValue(formKey, tags, value)
 	default:
 		slog.Error("Unsupported kind for element name", "name", value.Type().Name, "kind", elementKind)
 	}
@@ -281,7 +330,7 @@ func (d *MultipartFormDecoder) RecursiveStructDecoder(v reflect.Value) {
 		if !d.isSettable(field, value) {
 			continue
 		}
-		d.DecodeNode(d.request.FormValue(d.AddContext(formKey)), formKey, tags, value)
+		d.CheckDecodeNode(d.request.FormValue(d.AddContext(formKey)), formKey, tags, value)
 	}
 }
 
