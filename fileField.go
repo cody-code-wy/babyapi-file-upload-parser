@@ -17,25 +17,32 @@ type FileField struct {
 
 var fileFieldType = reflect.TypeOf((*FileField)(nil)).Elem()
 
-func (ff *FileField) GetFileName(fileStorePath string, id string) string {
-	directory := fmt.Sprintf("%s/%s", fileStorePath, id)
-	filename := fmt.Sprintf("%s/%s", directory, ff.FormContext)
+func (ff *FileField) GetFileName() string {
+	filename := ff.FormContext
 	if ff.FormKey != "" {
 		filename += "." + ff.FormKey
 	}
 	return filename
 }
 
+func (ff *FileField) GetFileDir(fileStorePath string, id string) string {
+	return fmt.Sprintf("%s/%s", fileStorePath, id)
+}
+
+func (ff *FileField) GetFilePath(fileStorePath string, id string) string {
+	return fmt.Sprintf("%s/%s", ff.GetFileDir(fileStorePath, id), ff.GetFileName())
+}
+
 func (ff *FileField) WriteFile(fileStorePath string, id string) error {
 	if !ff.HasContent() {
 		return fmt.Errorf("attempt writing empty file")
 	}
-	directory := fmt.Sprintf("%s/%s", fileStorePath, id)
+	directory := ff.GetFileDir(fileStorePath, id)
 	err := os.MkdirAll(directory, os.ModePerm)
 	if err != nil {
 		return err
 	}
-	filename := ff.GetFileName(fileStorePath, id)
+	filename := ff.GetFilePath(fileStorePath, id)
 	err = os.WriteFile(filename, ff.rawFile.Bytes(), 0644)
 	if err != nil {
 		return err
@@ -45,7 +52,7 @@ func (ff *FileField) WriteFile(fileStorePath string, id string) error {
 }
 
 func (ff *FileField) GetFile(fileStorePath string, id string) (*os.File, error) {
-	return os.Open(ff.GetFileName(fileStorePath, id))
+	return os.Open(ff.GetFilePath(fileStorePath, id))
 }
 
 func (ff *FileField) HasContent() bool {
