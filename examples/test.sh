@@ -1,0 +1,97 @@
+#!/bin/bash
+#
+curl -X POST --location "http://localhost:8080/Projects" \
+    -F "Project.projectName=Name;type=*/*" \
+    -F "Project.Description=Description;type=*/*" \
+    -F "Project.test2=some test text;type=*/*" \
+    -F "Project.Types.Struct.Test=This is a test;type=*/*" \
+    -F "Project.Types.Int=-128;type=*/*" \
+    -F "Project.Types.Int8=-8;type=*/*" \
+    -F "Project.Types.Int16=-16;type=*/*" \
+    -F "Project.Types.Int32=-32;type=*/*" \
+    -F "Project.Types.Int64=-64;type=*/*" \
+    -F "Project.Types.Uint=128;type=*/*" \
+    -F "Project.Types.Uint8=8;type=*/*" \
+    -F "Project.Types.Uint16=16;type=*/*" \
+    -F "Project.Types.Uint32=32;type=*/*" \
+    -F "Project.Types.Uint64=64;type=*/*" \
+    -F "Project.Types.Rune=132;type=*/*" \
+    -F "Project.Types.Byte=232;type=*/*" \
+    -F "Project.Types.Float32=32.001;type=*/*" \
+    -F "Project.Types.Float64=64.001;type=*/*" \
+    -F "Project.Types.Boolean=true;type=*/*" \
+    -F "Project.Types.String=This is just a normal string...;type=*/*" \
+    -F "Project.Types.Array[0]=10;type=*/*" \
+    -F "Project.Types.Array[1]=20;type=*/*" \
+    -F "Project.Types.Array[2]=30;type=*/*" \
+    -F "Project.Types.Slice=[4,3,2,1];type=*/*" \
+    -F "Project.Types.StructArray[0].Test=test1;type=*/*" \
+    -F "Project.Types.StructArray[1].Test=;type=*/*" \
+    -F "Project.Types.StructArray[1].Test=test3;type=*/*" \
+    -F "Project.Types.Array2D[0][0]=1;type=*/*" \
+    -F "Project.Types.Array2D[0][1]=2;type=*/*" \
+    -F "Project.Types.Array2D[1][0]=3;type=*/*" \
+    -F "Project.Types.Array2D[1][1]=4;type=*/*" \
+    -F "Project.Types.Slice[0]=Something inside 0;type=*/*" \
+    -F "Project.Types.Slice[1]=;type=*/*" \
+    -F "Project.Types.Slice[2]=Something inside 2;type=*/*" \
+    -F "Project.Types.Slice[3]=Something inside 3;type=*/*" \
+    -F "Project.Types.Slice[5]=Something inside 5;type=*/*" \
+    -F "Project.Types.Slice2D[0][0]=1.1;type=*/*" \
+    -F "Project.Types.Slice2D[0][1]=1.2;type=*/*" \
+    -F "Project.Types.Slice2D[1][0]=2.1;type=*/*" \
+    -F "Project.Types.Slice2D[1][1]=2.2;type=*/*" \
+    -F "Project.Types.Slice2D[2][0]=3.1;type=*/*" \
+    -F "Project.Types.StructSlice[0].Test=SS1;type=*/*" \
+    -F "Project.Types.StructSlice[1].Test=SS2;type=*/*" \
+    -F "Project.Types.StructSlice[2].Test=SS3;type=*/*" \
+    -F "Project.Types.StructSlice[3].Test=SS4;type=*/*" \
+    -F "Project.Types.StructSlice[4].Test=SS5;type=*/*" \
+    -F "Project.Types.StructSlice[5].Test=SS6;type=*/*" \
+    -F "Project.Types.SliceArray[0][0]=1.1;type=*/*" \
+    -F "Project.Types.SliceArray[0][1]=1.2;type=*/*" \
+    -F "Project.Types.SliceArray[0][2]=1.3;type=*/*" \
+    -F "Project.Types.SliceArray[1][0]=2.1;type=*/*" \
+    -F "Project.Types.SliceArray[1][1]=2.2;type=*/*" \
+    -F "Project.Types.SliceArray[1][2]=2.3;type=*/*" \
+    -F "Project.Types.SliceArray[2][0]=3.1;type=*/*" \
+    -F "Project.Types.SliceArray[2][1]=3.2;type=*/*" \
+    -F "Project.Types.SliceArray[2][2]=3.3;type=*/*" \
+    -F "Project.Types.ArraySlice[0][0]=1.1;type=*/*" \
+    -F "Project.Types.ArraySlice[0][1]=1.2;type=*/*" \
+    -F "Project.Types.ArraySlice[0][2]=1.3;type=*/*" \
+    -F "Project.Types.ArraySlice[1][0]=2.1;type=*/*" \
+    -F "Project.Types.ArraySlice[1][1]=2.2;type=*/*" \
+    -F "Project.Types.ArraySlice[1][2]=2.3;type=*/*" \
+    -F "Project.Types.ArraySlice[2][0]=3.1;type=*/*" \
+    -F "Project.Types.ArraySlice[2][1]=3.2;type=*/*" \
+    -F "Project.Types.ArraySlice[2][2]=3.3;type=*/*" \
+    -F "Project.Types.Maps.SliceStrStr[0][0.first]=1.1;type=*/*" \
+    -F "Project.Types.Maps.SliceStrStr[1][1.first]=2.1;type=*/*" \
+    -F "Project.Types.Maps.SliceStrStr[0][0.second]=1.2;type=*/*" \
+    -F "Project.Types.Maps.SliceStrStr[1][1.second]=2.2;type=*/*" \
+    -F "Project.Types.Maps.StrStr[first]=First;type=*/*" \
+    -F "Project.Types.Maps.StrStr[second]=Second;type=*/*" \
+    -F "Project.Types.Maps.IntStr[1]=First;type=*/*" \
+    -F "Project.Types.Maps.IntStr[2]=Second;type=*/*" \
+    -F "Project.Types.Maps.StrStruct[one].Test=First Struct;type=*/*" \
+    -F "Project.Types.Maps.StrStruct[two].Test=Second Struct;type=*/*" \
+    -F "Project.Types.Maps.StrImage[first]=@$0;filename=test.sh;type=*/*" \
+    -F "Project.Types.Maps.StrImage[second]=@$0;filename=test.sh;type=*/*" \
+    -F "Project.Image=@$0;filename=test.sh;type=*/*" \
+    -F "Project.OtherImage=@$0;filename=test.sh;type=*/*" \
+    -F "Project.Types.Image=@$0;filename=test.sh;type=*/*" \
+    -F "Project.Types.Images[0]=@$0;filename=.test.sh.0;type=*/*" \
+    -F "Project.Types.Images[1]=@$0;filename=test.sh.1;type=*/*" \
+    -F "Project.Types.Images[2]=@$0;filename=test.sh.2;type=*/*" \
+    -F "Project.Types.Images2D[0][0]=@$0;filename=test.sh.0;type=*/*" \
+    -F "Project.Types.Images2D[0][1]=@$0;filename=test.sh.1;type=*/*" \
+    -F "Project.Types.Images2D[1][0]=@$0;filename=test.sh.0;type=*/*" \
+    -F "Project.Types.Images2D[1][1]=@$0;filename=test.sh.1;type=*/*" \
+    -F "Project.Types.ImagesArray[0]=@$0;filename=test.sh.0;type=*/*" \
+    -F "Project.Types.ImagesArray[1]=@$0;filename=test.sh.1;type=*/*" \
+    -F "Project.Types.ImagesArray[2]=@$0;filename=test.sh.2;type=*/*" \
+    -F "Project.Types.ImagesArray2D[0][0]=@$0;filename=test.sh.0;type=*/*" \
+    -F "Project.Types.ImagesArray2D[0][1]=@$0;filename=test.sh.1;type=*/*" \
+    -F "Project.Types.ImagesArray2D[1][0]=@$0;filename=test.sh.0;type=*/*" \
+    -F "Project.Types.ImagesArray2D[1][1]=@$0;filename=test.sh.1;type=*/*"
