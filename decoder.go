@@ -154,9 +154,11 @@ func (d *MultipartFormDecoder) checkSliceElementAvailable(formKey string, index 
 			return true
 		}
 	}
-	for k := range d.request.MultipartForm.File {
-		if len(k) >= len(fullKey) && k[:len(fullKey)] == fullKey {
-			return true
+	if d.request.MultipartForm != nil {
+		for k := range d.request.MultipartForm.File {
+			if len(k) >= len(fullKey) && k[:len(fullKey)] == fullKey {
+				return true
+			}
 		}
 	}
 	return false
@@ -199,9 +201,11 @@ func (d *MultipartFormDecoder) getMapKeys(formKey string) []string {
 			foundKeys = append(foundKeys, foundKey)
 		}
 	}
-	for k := range d.request.MultipartForm.File {
-		if foundKey := extractKeys(baseKey, k); foundKey != "" {
-			foundKeys = append(foundKeys, foundKey)
+	if d.request.MultipartForm != nil {
+		for k := range d.request.MultipartForm.File {
+			if foundKey := extractKeys(baseKey, k); foundKey != "" {
+				foundKeys = append(foundKeys, foundKey)
+			}
 		}
 	}
 	return foundKeys
@@ -344,6 +348,8 @@ func DecodeMultipartForm(r *http.Request, v interface{}) {
 
 func Decoder(r *http.Request, v interface{}) error {
 	var err error
+
+	fmt.Println(r.Header.Get("Content-Type"))
 
 	if r.Header.Get("Content-Type")[:19] == "multipart/form-data" {
 		DecodeMultipartForm(r, v)
