@@ -8,6 +8,7 @@ import (
 type fileFieldSearcherContent struct {
 	writePath string
 	id        string
+	handler   func(fileField FileField, context *fileFieldSearcherContent)
 	v         interface{}
 }
 
@@ -20,12 +21,7 @@ func (c *fileFieldSearcherContent) checkArray(v reflect.Value) {
 func (c *fileFieldSearcherContent) checkStruct(v reflect.Value) {
 	switch fileField := v.Interface().(type) {
 	case FileField:
-		if fileField.HasContent() {
-			err := fileField.WriteFile(c.writePath, c.id)
-			if err != nil {
-				fmt.Println(err)
-			}
-		}
+		c.handler(fileField, c)
 		return
 	default:
 		dest := v.Type()
@@ -62,6 +58,13 @@ func (c *fileFieldSearcherContent) recursiveChecker(v reflect.Value) {
 }
 
 func WriteAllFileFields(writePath string, id string, v interface{}) {
-	context := fileFieldSearcherContent{writePath: writePath, id: id, v: v} 
+	context := fileFieldSearcherContent{writePath: writePath, id: id, v: v, handler: func(fileField FileField, context *fileFieldSearcherContent) {
+		if fileField.HasContent() {
+			err := fileField.WriteFile(context.writePath, context.id)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+	}}
 	context.recursiveChecker(reflect.ValueOf(v))
 }
