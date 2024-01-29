@@ -55,6 +55,10 @@ func (ff *FileField) GetFile(fileStorePath string, id string) (*os.File, error) 
 	return os.Open(ff.GetFilePath(fileStorePath, id))
 }
 
+func (ff *FileField) DeleteFile(fileStorePath string, id string) error {
+	return os.Remove(ff.GetFilePath(fileStorePath, id))
+}
+
 func (ff *FileField) HasContent() bool {
 	return ff.rawFile.Available() > 0
 }
