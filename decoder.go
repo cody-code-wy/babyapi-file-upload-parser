@@ -150,17 +150,13 @@ func (d *MultipartFormDecoder) checkSliceElementAvailable(formKey string, index 
 		return true
 	}
 	for k := range d.request.PostForm {
-		if len(k) >= len(fullKey) {
-			if k[:len(fullKey)] == fullKey {
-				return true
-			}
+		if len(k) >= len(fullKey) && k[:len(fullKey)] == fullKey {
+			return true
 		}
 	}
 	for k := range d.request.MultipartForm.File {
-		if len(k) >= len(fullKey) {
-			if k[:len(fullKey)] == fullKey {
-				return true
-			}
+		if len(k) >= len(fullKey) && k[:len(fullKey)] == fullKey {
+			return true
 		}
 	}
 	return false
