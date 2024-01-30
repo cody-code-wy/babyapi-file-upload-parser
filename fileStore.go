@@ -59,7 +59,7 @@ func (fs FileStore[T]) DeleteHook(r *http.Request) *babyapi.ErrResponse {
 	return nil
 }
 
-func (fs FileStore[T]) CreateUpdateHook(r *http.Request, resource T) *babyapi.ErrResponse {
+func (fs FileStore[T]) CreateUpdateHook(_ *http.Request, resource T) *babyapi.ErrResponse {
 	WriteAllFileFields(fs.FileStorePath, resource.GetID(), resource)
 	return nil
 }
