@@ -231,7 +231,7 @@ func (d *MultipartFormDecoder) setMapFormValue(formKey string, tags []string, fi
 	fieldValue.Set(newMap)
 }
 
-func (d *MultipartFormDecoder) setFileField(formKey string, tags []string, fieldValue reflect.Value) {
+func (d *MultipartFormDecoder) setFileField(formKey string, _ []string, fieldValue reflect.Value) {
 	file, header, err := d.request.FormFile(d.AddContext(formKey))
 	if err == nil {
 		fileBuf := bytes.Buffer{}
