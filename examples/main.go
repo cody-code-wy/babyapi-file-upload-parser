@@ -1,14 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"github.com/calvinmclean/babyapi"
 	"github.com/calvinmclean/babyapi/storage"
 	"github.com/cody-cody-wy/babyapiFileUploadParser"
 	"github.com/go-chi/render"
 	"github.com/madflojo/hord/drivers/hashmap"
-	"net/http"
-	"os"
 )
 
 type TestStruct struct {
@@ -81,6 +78,9 @@ func main() {
 	render.Decode = babyapiFileUploadParser.Decoder
 
 	ProjectApi := babyapi.NewAPI[*Project]("Projects", "/Projects", func() *Project { return &Project{} })
+	projectFileStore := babyapiFileUploadParser.NewFileStore[*Project](ProjectApi, "./Static")
+	projectFileStore.AutoAddHooks()
+	ProjectApi.AddCustomIDRoute(projectFileStore.ServeFilesRoute("/file"))
 
 	db, err := storage.NewFileDB(hashmap.Config{
 		Filename: "projects.db.json",
@@ -90,23 +90,6 @@ func main() {
 	}
 
 	ProjectApi.Storage = storage.NewClient[*Project](db, "User")
-
-	ProjectApi.SetAfterDelete(func(r *http.Request) *babyapi.ErrResponse {
-		id := babyapi.GetIDParam(r, ProjectApi.Name())
-		fmt.Println(id)
-		err := os.RemoveAll(fmt.Sprintf("./Static/%s/%s", ProjectApi.Name(), id))
-		if err != nil {
-			fmt.Println(err)
-			return nil
-		}
-		return nil
-	})
-
-	ProjectApi.SetOnCreateOrUpdate(func(r *http.Request, project *Project) *babyapi.ErrResponse {
-		fmt.Println("ON CREATE")
-		babyapiFileUploadParser.WriteAllFileFields("./Static/"+ProjectApi.Name(), project.GetID(), project)
-		return nil
-	})
 
 	ProjectApi.RunCLI()
 }
