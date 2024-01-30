@@ -95,3 +95,6 @@ curl -X POST --location "http://localhost:8080/Projects" \
     -F "Project.Types.ImagesArray2D[0][1]=@$0;filename=test.sh.1;type=*/*" \
     -F "Project.Types.ImagesArray2D[1][0]=@$0;filename=test.sh.0;type=*/*" \
     -F "Project.Types.ImagesArray2D[1][1]=@$0;filename=test.sh.1;type=*/*"
+
+# Example to get uploaded file
+# curl "http://localhost:8080/Projects/<ID>/file/Project.Image"
