@@ -78,7 +78,7 @@ func main() {
 	render.Decode = babyapiFileUploadParser.Decoder
 
 	ProjectApi := babyapi.NewAPI[*Project]("Projects", "/Projects", func() *Project { return &Project{} })
-	projectFileStore := babyapiFileUploadParser.NewFileStore[*Project](ProjectApi, "./Static")
+	projectFileStore := babyapiFileUploadParser.NewFileStore[*Project](ProjectApi, "./Uploads")
 	projectFileStore.AutoAddHooks()
 	ProjectApi.AddCustomIDRoute(projectFileStore.ServeFilesRoute("/file"))
 
