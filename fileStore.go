@@ -2,12 +2,13 @@ package babyapiFileUploadParser
 
 import (
 	"fmt"
-	"github.com/calvinmclean/babyapi"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/render"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/calvinmclean/babyapi"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/render"
 )
 
 type FileStore[T babyapi.Resource] struct {
