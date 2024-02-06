@@ -1,4 +1,4 @@
-package babyapiFileUploadParser
+package babyapi_file_upload_parser
 
 import (
 	"bytes"
