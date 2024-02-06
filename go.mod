@@ -1,4 +1,4 @@
-module github.com/cody-code-wy/babyapi-file_upload-parser
+module github.com/cody-code-wy/babyapi-file-upload-parser
 
 go 1.21.3
 
