@@ -45,11 +45,11 @@ type Types struct {
 	StructSlice   []TestStruct
 	SliceArray    [][3]float64
 	ArraySlice    [3][]float64
-	Image         babyapiFileUploadParser.FileField
-	Images        []babyapiFileUploadParser.FileField
-	Images2D      [][]babyapiFileUploadParser.FileField
-	ImagesArray   [3]babyapiFileUploadParser.FileField
-	ImagesArray2D [2][2]babyapiFileUploadParser.FileField
+	Image         babyapi_file_upload_parser.FileField
+	Images        []babyapi_file_upload_parser.FileField
+	Images2D      [][]babyapi_file_upload_parser.FileField
+	ImagesArray   [3]babyapi_file_upload_parser.FileField
+	ImagesArray2D [2][2]babyapi_file_upload_parser.FileField
 	privateInt    int
 	Maps          Maps
 }
@@ -59,7 +59,7 @@ type Maps struct {
 	StrStr      map[string]string
 	StrStruct   map[string]TestStruct
 	IntStr      map[int]string
-	StrImage    map[string]babyapiFileUploadParser.FileField
+	StrImage    map[string]babyapi_file_upload_parser.FileField
 	// StructStr map[TestStruct]string // struct keys not supported by JSON
 }
 
@@ -69,16 +69,16 @@ type Project struct {
 	Name        string `form:"projectName" json:"projectName"`
 	Description string
 	Test        string
-	Image       babyapiFileUploadParser.FileField
-	Image2      babyapiFileUploadParser.FileField `form:"OtherImage" json:"OtherImage"`
+	Image       babyapi_file_upload_parser.FileField
+	Image2      babyapi_file_upload_parser.FileField `form:"OtherImage" json:"OtherImage"`
 	Types       Types
 }
 
 func main() {
-	render.Decode = babyapiFileUploadParser.Decoder
+	render.Decode = babyapi_file_upload_parser.Decoder
 
 	ProjectApi := babyapi.NewAPI[*Project]("Projects", "/Projects", func() *Project { return &Project{} })
-	projectFileStore := babyapiFileUploadParser.NewFileStore[*Project](ProjectApi, "./Uploads")
+	projectFileStore := babyapi_file_upload_parser.NewFileStore[*Project](ProjectApi, "./Uploads")
 	projectFileStore.AutoAddHooks()
 	ProjectApi.AddCustomIDRoute(projectFileStore.ServeFilesRoute("/file"))
 
